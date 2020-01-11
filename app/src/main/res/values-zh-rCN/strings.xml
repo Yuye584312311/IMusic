@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">iMusic</string>
+    <string name="app_name">趣音乐</string>
     <string name="text_sys_tips">系统提示</string>
     <string name="text_action_tips">使用提示</string>
     <string name="text_detele_tips">删除提示</string>

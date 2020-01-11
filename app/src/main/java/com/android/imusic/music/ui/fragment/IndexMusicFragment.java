@@ -3,11 +3,9 @@ package com.android.imusic.music.ui.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -20,11 +18,9 @@ import com.android.imusic.music.activity.MusicAlbumActivity;
 import com.android.imusic.music.activity.MusicCollectActivity;
 import com.android.imusic.music.activity.MusicHistroyActivity;
 import com.android.imusic.music.activity.MusicLocalActivity;
-import com.android.imusic.music.activity.MusicSearchActivity;
 import com.android.imusic.music.adapter.MusicIndexDataAdapter;
 import com.android.imusic.music.bean.AlbumInfo;
 import com.android.imusic.music.bean.AudioInfo;
-import com.android.imusic.music.dialog.QuireDialog;
 import com.android.imusic.music.ui.contract.MusicListContract;
 import com.android.imusic.music.ui.presenter.MusicListPersenter;
 import com.android.imusic.music.utils.MediaUtils;
@@ -50,7 +46,7 @@ public class IndexMusicFragment extends BaseFragment<MusicListPersenter>
         implements Observer, MusicListContract.View {
 
     private MusicIndexDataAdapter mAdapter;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    //private SwipeRefreshLayout mSwipeRefreshLayout;
     private int QUERY_LOCATION_MUSIC=0;
 
     @Override
@@ -127,56 +123,54 @@ public class IndexMusicFragment extends BaseFragment<MusicListPersenter>
         });
         recyclerView.setAdapter(mAdapter);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.swipre_layout);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if(null!=mPresenter){
-                    mPresenter.getIndexAudios();
-                }
-            }
-        });
+//        mSwipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.swipre_layout);
+//        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+//        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                if(null!=mPresenter){
+//                    mPresenter.getIndexAudios();
+//                }
+//            }
+//        });
 
         MusicCommentTitleView titleView = (MusicCommentTitleView) getView().findViewById(R.id.title_view);
         titleView.setOnTitleClickListener(new MusicCommentTitleView.OnTitleClickListener() {
 
             @Override
             public void onBack(View view) {
-                QuireDialog.getInstance(getActivity())
-                        .setTitleText(getString(R.string.text_support_anchor))
-                        .setContentText(getString(R.string.text_support_anchor_tips))
-                        .setSubmitTitleText(getString(R.string.text_support_support))
-                        .setCancelTitleText(getString(R.string.text_xiao_tips_close))
-                        .setTopImageRes(R.drawable.ic_setting_tips1)
-                        .setBtnClickDismiss(false)
-                        .setOnQueraConsentListener(new QuireDialog.OnQueraConsentListener() {
-                            @Override
-                            public void onConsent(QuireDialog dialog) {
-                                dialog.dismiss();
-                                String userSing="tsx05608jpga1ccy7yeej90";
-                                try {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("alipays://platformapi/startapp?saId=10000007&clientVersion=3.7.0.0718&qrcode=https%3A%2F%2Fqr.alipay.com%2F"+userSing+"%3F_s%3Dweb-other"));
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onRefuse(QuireDialog dialog) {
-                                dialog.dismiss();
-                            }
-                        }).show();
-
-
+//                QuireDialog.getInstance(getActivity())
+//                        .setTitleText(getString(R.string.text_support_anchor))
+//                        .setContentText(getString(R.string.text_support_anchor_tips))
+//                        .setSubmitTitleText(getString(R.string.text_support_support))
+//                        .setCancelTitleText(getString(R.string.text_xiao_tips_close))
+//                        .setTopImageRes(R.drawable.ic_setting_tips1)
+//                        .setBtnClickDismiss(false)
+//                        .setOnQueraConsentListener(new QuireDialog.OnQueraConsentListener() {
+//                            @Override
+//                            public void onConsent(QuireDialog dialog) {
+//                                dialog.dismiss();
+//                                String userSing="tsx05608jpga1ccy7yeej90";
+//                                try {
+//                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("alipays://platformapi/startapp?saId=10000007&clientVersion=3.7.0.0718&qrcode=https%3A%2F%2Fqr.alipay.com%2F"+userSing+"%3F_s%3Dweb-other"));
+//                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                    startActivity(intent);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onRefuse(QuireDialog dialog) {
+//                                dialog.dismiss();
+//                            }
+//                        }).show();
             }
 
             @Override
             public void onMenuClick(View v) {
-                Intent intent=new Intent(getContext(), MusicSearchActivity.class);
-                startActivity(intent);
+//                Intent intent=new Intent(getContext(), MusicSearchActivity.class);
+//                startActivity(intent);
             }
 
             @Override
@@ -190,7 +184,7 @@ public class IndexMusicFragment extends BaseFragment<MusicListPersenter>
         });
         //关注播放器内部状态和渠道状态
         MusicPlayerManager.getInstance().addObservable(this);
-        mPresenter.getIndexAudios();
+        //mPresenter.getIndexAudios();
     }
 
     @Override
@@ -240,14 +234,14 @@ public class IndexMusicFragment extends BaseFragment<MusicListPersenter>
      */
     @Override
     public void showAudios(List<AudioInfo> data) {
-        if(null!=mSwipeRefreshLayout){
-            mSwipeRefreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
-            });
-        }
+//        if(null!=mSwipeRefreshLayout){
+//            mSwipeRefreshLayout.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mSwipeRefreshLayout.setRefreshing(false);
+//                }
+//            });
+//        }
         if(null!=mAdapter){
             List<AudioInfo> dataList= MediaUtils.getInstance().createIndexData();
             data.addAll(0,dataList);
@@ -277,14 +271,14 @@ public class IndexMusicFragment extends BaseFragment<MusicListPersenter>
      */
     @Override
     public void showLoading() {
-        if(null!=mSwipeRefreshLayout&&!mSwipeRefreshLayout.isRefreshing()){
-            mSwipeRefreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    mSwipeRefreshLayout.setRefreshing(true);
-                }
-            });
-        }
+//        if(null!=mSwipeRefreshLayout&&!mSwipeRefreshLayout.isRefreshing()){
+//            mSwipeRefreshLayout.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mSwipeRefreshLayout.setRefreshing(true);
+//                }
+//            });
+//        }
     }
 
     /**
@@ -294,14 +288,14 @@ public class IndexMusicFragment extends BaseFragment<MusicListPersenter>
      */
     @Override
     public void showError(int code, String errorMsg) {
-        if(null!=mSwipeRefreshLayout){
-            mSwipeRefreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
-            });
-        }
+//        if(null!=mSwipeRefreshLayout){
+//            mSwipeRefreshLayout.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mSwipeRefreshLayout.setRefreshing(false);
+//                }
+//            });
+//        }
         if(code!= BaseEngin.API_RESULT_EMPTY){
             Toast.makeText(getContext(),errorMsg,Toast.LENGTH_SHORT).show();
         }
@@ -323,10 +317,10 @@ public class IndexMusicFragment extends BaseFragment<MusicListPersenter>
     public void onDestroy() {
         super.onDestroy();
         QUERY_LOCATION_MUSIC=0;
-        if(null!=mSwipeRefreshLayout){
-            mSwipeRefreshLayout.setRefreshing(false);
-            mSwipeRefreshLayout=null;
-        }
+//        if(null!=mSwipeRefreshLayout){
+//            mSwipeRefreshLayout.setRefreshing(false);
+//            mSwipeRefreshLayout=null;
+//        }
         if(null!=mAdapter){
             mAdapter.onDestroy();
             mAdapter=null;

@@ -87,6 +87,11 @@
             android:launchMode="singleTask"/>
         <activity android:name=".music.activity.TestActivity"
             android:screenOrientation="portrait"/>
+        <!--WebView-->
+        <activity android:name="com.android.imusic.web.ui.activity.WebViewActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"/>
         <!--版本升级,适配6.0及以上-->
         <provider
             android:name="android.support.v4.content.FileProvider"

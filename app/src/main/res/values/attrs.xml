@@ -13,4 +13,40 @@
         <!--背景按下的颜色-->
         <attr name="shapeBackgroundSelectorColor" format="color"></attr>
     </declare-styleable>
+    <!--中粗字体-->
+    <declare-styleable name="BoldMediumTextView">
+        <attr name="boldStorkeWidth" format="float"></attr>
+    </declare-styleable>
+    <style name="TitleBack">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+    <!--Title-->
+    <declare-styleable name="CommentTitleView">
+        <attr name="commentTitle" format="string" />
+        <attr name="commentTitleColor" format="color" />
+        <attr name="commentTitleSize" format="dimension"></attr>
+        <attr name="commentSubTitle" format="string" />
+        <attr name="commentSubTitleColor" format="color" />
+        <attr name="commentSubTitleSize" format="dimension"></attr>
+        <attr name="commentBackRes" format="reference" />
+        <attr name="commentCloseRes" format="reference" />
+        <attr name="commentBackGroundRes" format="reference" />
+        <attr name="commentShowBack" format="boolean" />
+        <attr name="commentMenuRes" format="reference" />
+        <attr name="commentShowLine" format="boolean" />
+        <attr name="commentShowClose" format="boolean" />
+        <attr name="commentLineColor" format="color" />
+        <!--标题栏风格，状态栏 0：白底黑字 1：彩底白字-->
+        <attr name="commentTitleStyle" format="integer" />
+        <!--标题栏文字字体样式-->
+        <attr name="commentTitleTextStyle" format="enum">
+            <enum name="normal" value="0"></enum>
+            <enum name="bold" value="1"></enum>
+            <enum name="italic" value="2"></enum>
+        </attr>
+    </declare-styleable>
 </resources>

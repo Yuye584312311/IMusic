@@ -3,6 +3,9 @@ package com.android.imusic.music.dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -63,6 +66,10 @@ public class QuireDialog extends BaseDialog {
         if(null!=mOnQueraConsentListener) mOnQueraConsentListener.onDissmiss();
     }
 
+    public TextView getContentTextView(){
+        return (TextView) findViewById(R.id.tv_content);
+    }
+
     /**
      * 设置标题
      * @param title
@@ -95,6 +102,18 @@ public class QuireDialog extends BaseDialog {
         if(null!=tv_cancel) tv_cancel.setText(cancelTitleText);
         return this;
     }
+
+    /**
+     * 设置提示内容文字大小
+     * @param size
+     * @return
+     */
+    public  QuireDialog setContentTextSize(int size) {
+        TextView tv_content = (TextView) findViewById(R.id.tv_content);
+        if(null!=tv_content) tv_content.setTextSize(TypedValue.COMPLEX_UNIT_PX,size);
+        return this;
+    }
+
     /**
      * 设置提示内容
      * @param content
@@ -103,6 +122,29 @@ public class QuireDialog extends BaseDialog {
     public  QuireDialog setContentText(String content) {
         TextView tv_content = (TextView) findViewById(R.id.tv_content);
         if(null!=tv_content) tv_content.setText(Html.fromHtml(content));
+        tv_content.setVisibility(TextUtils.isEmpty(content)?View.GONE:View.VISIBLE);
+        return this;
+    }
+
+    /**
+     * 设置提示内容
+     * @param content
+     * @return
+     */
+    public QuireDialog setContentText(Spannable content) {
+        TextView tv_content = (TextView) findViewById(R.id.tv_content);
+        tv_content.setText(content);
+        tv_content.setVisibility(TextUtils.isEmpty(content)?View.GONE:View.VISIBLE);
+        return this;
+    }
+
+    /**
+     * 设置文字显示位置，默认居中显示
+     * @param gravity
+     */
+    public QuireDialog setContextGravity(int gravity){
+        TextView tv_content = (TextView) findViewById(R.id.tv_content);
+        tv_content.setGravity(gravity);
         return this;
     }
 

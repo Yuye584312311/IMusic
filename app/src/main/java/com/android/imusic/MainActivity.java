@@ -1,11 +1,16 @@
 package com.android.imusic;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -16,13 +21,17 @@ import com.android.imusic.music.activity.MusicLockActivity;
 import com.android.imusic.music.activity.MusicPlayerActivity;
 import com.android.imusic.music.adapter.MusicFragmentPagerAdapter;
 import com.android.imusic.music.dialog.QuireDialog;
+import com.android.imusic.store.fragment.IndexSettingFragment;
+import com.android.imusic.music.utils.TextViewSpannable;
+import com.android.imusic.net.Constants;
+import com.android.imusic.store.listener.OnSpannableClickListener;
+import com.android.imusic.web.ui.activity.WebViewActivity;
 import com.music.player.lib.manager.SqlLiteCacheManager;
 import com.android.imusic.music.manager.VersionUpdateManager;
 import com.android.imusic.music.ui.fragment.IndexMusicFragment;
 import com.android.imusic.music.utils.MediaUtils;
 import com.android.imusic.net.OkHttpUtils;
 import com.android.imusic.video.activity.VideoPlayerActviity;
-import com.android.imusic.video.fragment.IndexVideoFragment;
 import com.music.player.lib.bean.BaseAudioInfo;
 import com.music.player.lib.constants.MusicConstants;
 import com.music.player.lib.listener.MusicInitializeCallBack;
@@ -84,7 +93,7 @@ public class MainActivity extends BaseActivity {
         mViewPager.setOverScrollMode(View.OVER_SCROLL_NEVER);
         List<Fragment> fragments=new ArrayList<>();
         fragments.add(new IndexMusicFragment());
-        fragments.add(new IndexVideoFragment());
+        fragments.add(new IndexSettingFragment());
         mViewPager.setOffscreenPageLimit(1);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -110,13 +119,82 @@ public class MainActivity extends BaseActivity {
         });
         mPagerAdapter = new MusicFragmentPagerAdapter(getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(mPagerAdapter);
-        requstPermissions();
 
         //当APP被回收或者用户退出了APP，音乐还在后台播放，点击通知栏时会将正在播放的音频ID传到此处
         long audioID = getIntent().getLongExtra(MusicConstants.KEY_MUSIC_ID, 0);
         if(audioID>0){
             startToMusicPlayer(audioID);
         }
+        initMain();
+    }
+
+    /**
+     * 初始化
+     */
+    private void initMain() {
+        if(0== MusicUtils.getInstance().getInt(Constants.SP_KEY_SERVICE,0)){
+            Spanned spanned = Html.fromHtml(getServiceAgreement());
+            QuireDialog instance = QuireDialog.getInstance(this);
+            SpannableString formatContent = TextViewSpannable.getInstance().formatContent(spanned,instance.getContentTextView(),
+                    Color.parseColor("#4DB7FF"),new OnSpannableClickListener() {
+                        @Override
+                        public void onServiceClick(String service) {
+                            Logger.d(TAG, "service:" + service);
+                            if(Constants.TEXT_USER_SERVICE.equals(service)){
+                                Intent intent=new Intent(MainActivity.this,WebViewActivity.class);
+                                intent.putExtra("url", Constants.SERVICE_USER);
+                                intent.putExtra("title","用户协议");
+                                startActivity(intent);
+                            }else if(Constants.TEXT_USER_ITEM.equals(service)){
+                                Intent intent1=new Intent(MainActivity.this,WebViewActivity.class);
+                                intent1.putExtra("url",Constants.SERVICE_PRIVATE);
+                                intent1.putExtra("title","隐私政策");
+                                startActivity(intent1);
+                            }
+                        }
+                    }, null);
+            instance.setTitleText("用户协议及隐私条款")
+                    .setContentText(formatContent)
+                    .setContextGravity(Gravity.NO_GRAVITY)
+                    .setSubmitTitleText("我同意")
+                    .setCancelTitleText("不同意并退出")
+                    .setContentTextSize(MusicUtils.getInstance().dpToPxInt(MainActivity.this,14f))
+                    .setContentTextColor(Color.parseColor("#333333"))
+                    .setDialogCancelable(false)
+                    .setDialogCanceledOnTouchOutside(false)
+                    .setOnQueraConsentListener(new QuireDialog.OnQueraConsentListener() {
+                        @Override
+                        public void onConsent(QuireDialog dialog) {
+                            MusicUtils.getInstance().putInt(Constants.SP_KEY_SERVICE,1);
+                            requstPermissions();
+                        }
+
+                        @Override
+                        public void onRefuse(QuireDialog dialog) {
+                            System.exit(0);
+                        }
+                    }).show();
+            return;
+        }
+        requstPermissions();
+    }
+
+    public String getServiceAgreement(){
+        String html="<font>我们依据最新法律，向您说明趣音乐软件的用户服务协议，特向您推送本提示；请阅读并充分理解相关协议。" +
+                "<br/>" +
+                "<br/>" +
+                "<strong>我们承诺</strong>" +
+                "<br/>" +
+                "我们会严格按照\"网络安全法\"、\"信息网络传播保护条例\"等保护您的个人信息；" +
+                "<br/>" +
+                "如果未经您的授权，我们不会使用您的个人信息作为您未授权的其他的目的。" +
+                "<br/>" +
+                "<br/>" +
+                "点击“同意”，即表示您已阅读并同意\"用户协议\"，阅读完整版" +
+                "<font color='#4DB7FF'>"+ Constants.TEXT_USER_SERVICE+"</font>及"+
+                "<font color='#4DB7FF'>"+ Constants.TEXT_USER_ITEM+"</font>"+
+                "</font>";
+        return html;
     }
 
     /**
