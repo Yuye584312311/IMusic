@@ -1,5 +1,6 @@
 package com.android.imusic.music.ui.fragment;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 import com.android.imusic.R;
+import com.android.imusic.base.BaseActivity;
 import com.android.imusic.base.BaseEngin;
 import com.android.imusic.base.BaseFragment;
 import com.android.imusic.music.activity.MusicAlbumActivity;
@@ -24,6 +26,11 @@ import com.android.imusic.music.bean.AudioInfo;
 import com.android.imusic.music.ui.contract.MusicListContract;
 import com.android.imusic.music.ui.presenter.MusicListPersenter;
 import com.android.imusic.music.utils.MediaUtils;
+import com.android.imusic.permission.listener.OnRuntimePermissionListener;
+import com.android.imusic.permission.manager.RuntimePermissionManager;
+import com.android.imusic.permission.model.PermissionModel;
+import com.android.imusic.permission.ui.dialog.PermissQuireDialog;
+import com.android.imusic.permission.ui.dialog.RuntimePermissionDialog;
 import com.music.player.lib.adapter.base.OnItemClickListener;
 import com.music.player.lib.bean.BaseAudioInfo;
 import com.music.player.lib.bean.MusicStatus;
@@ -122,7 +129,6 @@ public class IndexMusicFragment extends BaseFragment<MusicListPersenter>
             }
         });
         recyclerView.setAdapter(mAdapter);
-
 //        mSwipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.swipre_layout);
 //        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
 //        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -133,10 +139,8 @@ public class IndexMusicFragment extends BaseFragment<MusicListPersenter>
 //                }
 //            }
 //        });
-
         MusicCommentTitleView titleView = (MusicCommentTitleView) getView().findViewById(R.id.title_view);
         titleView.setOnTitleClickListener(new MusicCommentTitleView.OnTitleClickListener() {
-
             @Override
             public void onBack(View view) {
 //                QuireDialog.getInstance(getActivity())
@@ -190,8 +194,11 @@ public class IndexMusicFragment extends BaseFragment<MusicListPersenter>
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //权限获取到后，此界面可能还未初始化完成，检查标记是否需要更新本地音乐库
-        if(QUERY_LOCATION_MUSIC>0&&null!=mPresenter){
+        initAppService();
+    }
+
+    private void initAppService() {
+        if(null!=mPresenter){
             mPresenter.getLocationAudios(getActivity());
         }
     }

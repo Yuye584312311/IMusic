@@ -1,9 +1,6 @@
 package com.android.imusic.base;
 
-import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
@@ -11,8 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -45,12 +40,6 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
 
     protected static final String TAG = "BaseActivity";
     protected P mPresenter;
-    //权限处理
-    private final static int READ_EXTERNAL_STORAGE_CODE = 100;//SD卡
-    private final static int WRITE_EXTERNAL_STORAGE_CODE = 101;//SD卡
-    protected final static int SETTING_REQUST = 123;
-    protected static final int PREMISSION_CANCEL=0;//权限被取消申请
-    protected static final int PREMISSION_SUCCESS=1;//权限申请成功
     protected MusicLoadingView mLoadingView;
     private boolean isTransparent=true;//is full transparent
 
@@ -90,177 +79,10 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
     @Override
     public void showError(int code, String errorMsg) {}
 
-    //============================================权限处理===========================================
-    /**
-     * 向用户申请的权限列表
-     */
-    protected static PermissionModel[] models;
-
-    /**
-     * 运行时权限
-     */
-    protected void requstPermissions() {
-        if(Build.VERSION.SDK_INT < 23){
-            onRequstPermissionResult(PREMISSION_SUCCESS);
-            return;
-        }
-        if(null==models) models=new PermissionModel[]{
-                new PermissionModel(Manifest.permission.READ_EXTERNAL_STORAGE,
-                        getString(R.string.text_per_storage_read), READ_EXTERNAL_STORAGE_CODE),
-                new PermissionModel(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        getString(R.string.text_per_storage_write), WRITE_EXTERNAL_STORAGE_CODE)
-        };
-        try {
-            for (PermissionModel model : models) {
-                if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, model.permission)) {
-                    ActivityCompat.requestPermissions(this, new String[]{model.permission}, model.requestCode);
-                    return;
-                }
-            }
-            // 到这里就表示所有需要的权限已经通过申
-            onRequstPermissionResult(PREMISSION_SUCCESS);
-        } catch (Throwable e) {
-        }
-    }
-
-    /**
-     * 运行时权限
-     */
-    protected void requstPermissions(PermissionModel[] permissionModels) {
-        if(Build.VERSION.SDK_INT < 23){
-            onRequstPermissionResult(PREMISSION_SUCCESS);
-            return;
-        }
-        models=permissionModels;
-        try {
-            for (PermissionModel model : models) {
-                if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, model.permission)) {
-                    ActivityCompat.requestPermissions(this, new String[]{model.permission}, model.requestCode);
-                    return;
-                }
-            }
-            // 到这里就表示所有需要的权限已经通过申
-            onRequstPermissionResult(PREMISSION_SUCCESS);
-        } catch (Throwable e) {
-        }
-    }
-
-    /**
-     * 请求权限成功
-     * @param resultCode 1：已授予 0：未授予
-     */
-    protected void onRequstPermissionResult(int resultCode) {}
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (READ_EXTERNAL_STORAGE_CODE == requestCode) {
-            if (isAllRequestedPermissionGranted()) {
-                onRequstPermissionResult(PREMISSION_SUCCESS);
-            } else {
-                requstPermissions();
-            }
-        }
         requstCode=requestCode;
-    }
-
-    /**
-     * 申请结果回调
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case READ_EXTERNAL_STORAGE_CODE:
-            case WRITE_EXTERNAL_STORAGE_CODE:
-                if(null!=grantResults&&grantResults.length>0){
-                    if (PackageManager.PERMISSION_GRANTED != grantResults[0]) {
-                        //用户拒绝过其中一个权限
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
-                            new android.support.v7.app.AlertDialog.Builder(BaseActivity.this)
-                                    .setTitle(getString(R.string.text_per_read_song_error))
-                                    .setMessage(findPermissionExplain(permissions[0]))
-                                    .setNegativeButton(getString(R.string.text_cancel), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            onRequstPermissionResult(PREMISSION_CANCEL);
-                                        }
-                                    })
-                                    .setPositiveButton(getString(R.string.text_submit), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            requstPermissions();
-                                        }
-                                    }).setCancelable(false).show();
-                        } else {
-                            //用户勾选了不再询问，手动开启
-                            new android.support.v7.app.AlertDialog.Builder(BaseActivity.this)
-                                    .setTitle(getString(R.string.text_per_read_song_error))
-                                    .setMessage(getString(R.string.text_per_read_song_pre_error))
-                                    .setNegativeButton(getString(R.string.text_cancel), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            onRequstPermissionResult(PREMISSION_CANCEL);
-                                        }
-                                    })
-                                    .setPositiveButton(getString(R.string.text_start_setting), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            startActivityForResult(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                                                    .setData(Uri.fromParts("package", getPackageName(), null)), SETTING_REQUST);
-                                        }
-                                    }).setCancelable(false).show();
-                        }
-                        return;
-                    }
-                    // 到这里就表示用户允许了本次请求，继续检查是否还有待申请的权限没有申请
-                    if (isAllRequestedPermissionGranted()) {
-                        onRequstPermissionResult(PREMISSION_SUCCESS);
-                    } else {
-                        requstPermissions();
-                    }
-                }
-                break;
-        }
-    }
-
-    protected String findPermissionExplain(String permission) {
-        if (null!=models) {
-            for (PermissionModel model : models) {
-                if (model != null && model.permission != null && model.permission.equals(permission)) {
-                    return model.explain;
-                }
-            }
-        }
-        return null;
-    }
-
-    protected boolean isAllRequestedPermissionGranted() {
-        if(null!=models){
-            for (PermissionModel model : models) {
-                if (PackageManager.PERMISSION_GRANTED !=
-                        ContextCompat.checkSelfPermission(this, model.permission)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    public static class PermissionModel {
-        public String permission;
-        public String explain;
-        public int requestCode;
-
-        public PermissionModel(String permission, String explain, int requestCode) {
-            this.permission = permission;
-            this.explain = explain;
-            this.requestCode = requestCode;
-        }
     }
 
     //============================================悬浮窗=============================================

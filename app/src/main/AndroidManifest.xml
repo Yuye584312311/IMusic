@@ -92,6 +92,10 @@
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="portrait"/>
+        <!--权限申请-->
+        <activity android:name="com.android.imusic.permission.ui.activity.RuntimePermissionActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/TrandslucentTheme"/>
         <!--版本升级,适配6.0及以上-->
         <provider
             android:name="android.support.v4.content.FileProvider"

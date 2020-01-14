@@ -89,4 +89,5 @@
     <string name="text_xiao_tips_title">Xiaomi user usage Tips</string>
     <string name="text_xiao_tips_content">Due to the limitations of Xiaomi ROM, iMusic can not buffer and play online music under the lock screen or background. Go to system Settings-Power and performance-scene configuration to turn off sleep mode. You can experience it normally.</string>
     <string name="text_xiao_tips_close">Close</string>
+    <string name="splash_runtime_permission_tips">Reading the local music list requires you to provide file reading permissions</string>
 </resources>

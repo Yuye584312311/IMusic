@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--中粗字体-->
+    <declare-styleable name="BoldMediumTextView">
+        <attr name="boldStorkeWidth" format="float"></attr>
+    </declare-styleable>
     <!--ShapeButton-->
     <declare-styleable name="ShapeTextView">
         <!--Button圆角-->
@@ -12,10 +16,8 @@
         <attr name="shapeBackgroundColor" format="color"></attr>
         <!--背景按下的颜色-->
         <attr name="shapeBackgroundSelectorColor" format="color"></attr>
-    </declare-styleable>
-    <!--中粗字体-->
-    <declare-styleable name="BoldMediumTextView">
-        <attr name="boldStorkeWidth" format="float"></attr>
+        <!--字体storkeWidth-->
+        <attr name="shapeBoldStrokeWidth" format="float"></attr>
     </declare-styleable>
     <style name="TitleBack">
         <item name="android:layout_width">wrap_content</item>

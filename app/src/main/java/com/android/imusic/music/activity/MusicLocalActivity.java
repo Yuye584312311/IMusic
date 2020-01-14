@@ -81,7 +81,7 @@ public class MusicLocalActivity extends BaseActivity<MusicLocationPersenter> imp
         mAdapter = new MusicCommenListAdapter(MusicLocalActivity.this,null,this);
         recyclerView.setAdapter(mAdapter);
         MusicPlayerManager.getInstance().addObservable(this);
-        requstPermissions();
+        initAppService();
     }
 
     @Override
@@ -89,17 +89,8 @@ public class MusicLocalActivity extends BaseActivity<MusicLocationPersenter> imp
         return new MusicLocationPersenter();
     }
 
-    @Override
-    protected void onRequstPermissionResult(int resultCode) {
-        super.onRequstPermissionResult(resultCode);
-        if(resultCode==PREMISSION_CANCEL){
-            Toast.makeText(this,getString(R.string.text_local_premiss),Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-        if(resultCode==PREMISSION_SUCCESS){
-            queryLocationMusic();
-        }
+    private void initAppService() {
+        queryLocationMusic();
     }
 
     /**

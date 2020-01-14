@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:id="@+id/root_view"
+    android:background="@drawable/ad_bg_button_white_radius_10">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ad_ic_permission_bg"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"/>
+    <com.android.imusic.music.view.BoldMediumTextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#555555"
+        android:textSize="15dp"
+        android:layout_margin="22dp"
+        android:layout_centerInParent="true"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="5dp"
+        android:gravity="center"
+        android:text="" />
+    <com.android.imusic.music.view.ShapeTextView
+        android:id="@+id/btn_submit"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginLeft="21dp"
+        android:layout_marginRight="21dp"
+        android:layout_marginTop="2dp"
+        app:shapeRadius="24dp"
+        app:shapeBackgroundColor="#FFF55003"
+        app:shapeBackgroundSelectorColor="#E6FF5100"
+        android:textColor="#FFFFFF"
+        android:textSize="16dp"
+        android:gravity="center"
+        app:shapeBoldStrokeWidth="0.8"
+        android:text="确 定"
+        android:layout_marginBottom="24dp"/>
+</LinearLayout>

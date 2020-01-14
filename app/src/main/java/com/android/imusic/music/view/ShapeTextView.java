@@ -2,11 +2,14 @@ package com.android.imusic.music.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +23,7 @@ import com.android.imusic.R;
 
 public class ShapeTextView extends android.support.v7.widget.AppCompatTextView implements View.OnTouchListener {
 
+    private float mStrokeWidth=0.5f;
     //圆角、边框
     private int mRadius,mStroke;
     //背景颜色
@@ -47,9 +51,10 @@ public class ShapeTextView extends android.support.v7.widget.AppCompatTextView i
             mStrokeColor = typedArray.getColor(R.styleable.ShapeTextView_shapeStrokeColor,
                     ContextCompat.getColor(getContext(), android.R.color.transparent));
             mBackGroundColor = typedArray.getColor(R.styleable.ShapeTextView_shapeBackgroundColor,
-                    ContextCompat.getColor(getContext(), R.color.colorAccent));
+                    ContextCompat.getColor(getContext(), R.color.style));
             mBackGroundSelectedColor = typedArray.getColor(R.styleable.ShapeTextView_shapeBackgroundSelectorColor,
-                    ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+                    ContextCompat.getColor(getContext(), R.color.style));
+            mStrokeWidth = typedArray.getFloat(R.styleable.ShapeTextView_shapeBoldStrokeWidth,mStrokeWidth);
             typedArray.recycle();
         }
         GradientDrawable gradientDrawable = new GradientDrawable();
@@ -97,6 +102,15 @@ public class ShapeTextView extends android.support.v7.widget.AppCompatTextView i
         }
     }
 
+    /**
+     * 设置描边宽度
+     * @param strokeWidth 从0.0起
+     */
+    public void setStrokeWidth(float strokeWidth){
+        this.mStrokeWidth=strokeWidth;
+        invalidate();
+    }
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
@@ -119,5 +133,15 @@ public class ShapeTextView extends android.support.v7.widget.AppCompatTextView i
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        //获取当前控件的画笔
+        TextPaint paint = getPaint();
+        //设置画笔的描边宽度值
+        paint.setStrokeWidth(mStrokeWidth);
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        super.onDraw(canvas);
     }
 }
