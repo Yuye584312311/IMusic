@@ -1,5 +1,7 @@
 package com.android.imusic.net;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -9,17 +11,24 @@ import com.android.imusic.music.utils.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.music.player.lib.util.Logger;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import jp.wasabeef.glide.transformations.internal.Utils;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Cookie;
@@ -447,6 +456,60 @@ public final class OkHttpUtils {
     }
 
     /**
+     * 系统原生HttpURLConnection
+     * @param host
+     * @param callBack
+     */
+    public void setbSysRequst(final String host, final OnResultCallBack callBack){
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                try {
+                    URL url = new URL(host);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(900000);
+                    conn.setConnectTimeout(900000);
+                    conn.setDoInput(true);
+                    conn.setRequestMethod("GET");
+                    if(conn.getResponseCode()==200){
+                        InputStream inputStream = conn.getInputStream();
+                        byte[] by = new byte[1024];
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                        int len = -1;
+                        while ((len = inputStream.read(by)) != -1) {
+                            bos.write(by, 0, len);
+                        }
+                        inputStream.close();
+                        final String body = bos.toString("utf-8");
+                        final Object resultInfo = getResultInfo(body, callBack.getType());
+                        if(null!=mHandler&&null!=callBack){
+                            if(null!=resultInfo){
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        callBack.onResponse(resultInfo);
+                                    }
+                                });
+                            }else{
+                                error(callBack,ERROR_JSON_FORMAT,"Json format error");
+                            }
+                        }
+                    }else{
+                        error(callBack,conn.getResponseCode(),"请求失败");
+                    }
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    error(callBack,ERROR_INVALID,e.getMessage());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    error(callBack,ERROR_IO,e.getMessage());
+                }
+            }
+        }.start();
+    }
+
+    /**
      * 解析Response
      * @param response response响应体
      * @param callBack callBack回调
@@ -458,6 +521,7 @@ public final class OkHttpUtils {
                 if(REQUST_OK==response.code()){
                     try {
                         String string = response.body().string();
+
                         response.close();
                         if(!TextUtils.isEmpty(string)){
                             if(DEBUG) Logger.d(TAG,"服务端返回数据-->"+string);

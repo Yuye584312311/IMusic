@@ -17,7 +17,13 @@
         android:icon="@drawable/ic_music_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config">
+
+        <!--HTTP-->
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
         <!--
         //当用户每次离开APP 任务栈时，系统都将会将此APP栈中的所有Activity销毁,返回此任务栈时重新创建根栈
         android:finishOnTaskLaunch="true"

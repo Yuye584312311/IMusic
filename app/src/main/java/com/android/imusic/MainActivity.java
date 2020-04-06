@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -15,7 +16,9 @@ import com.android.imusic.base.BasePresenter;
 import com.android.imusic.music.activity.MusicLockActivity;
 import com.android.imusic.music.activity.MusicPlayerActivity;
 import com.android.imusic.music.adapter.MusicFragmentPagerAdapter;
+import com.android.imusic.music.bean.Test;
 import com.android.imusic.music.dialog.QuireDialog;
+import com.android.imusic.net.OnResultCallBack;
 import com.music.player.lib.manager.SqlLiteCacheManager;
 import com.android.imusic.music.manager.VersionUpdateManager;
 import com.android.imusic.music.ui.fragment.IndexMusicFragment;
@@ -57,66 +60,107 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         //视频、音乐播放器初始化
         initConfig();
-        mBtnMusic = (TextView) findViewById(R.id.music_btn_music);
-        mBtnMusic.setSelected(true);
-        mBtnVideo = (TextView) findViewById(R.id.music_btn_video);
-        View.OnClickListener onClickListener=new View.OnClickListener() {
+        ((TextView) findViewById(R.id.tv_content)).setMovementMethod(ScrollingMovementMethod.getInstance());
+        //OkHttp
+        findViewById(R.id.btn_okHttp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int id = v.getId();
-                switch (id) {
-                    case R.id.music_btn_music:
-                        mBtnVideo.setSelected(false);
-                        mBtnMusic.setSelected(true);
-                        mViewPager.setCurrentItem(0);
-                        break;
-                    case R.id.music_btn_video:
-                        mBtnMusic.setSelected(false);
-                        mBtnVideo.setSelected(true);
-                        mViewPager.setCurrentItem(1);
-                        break;
-                }
-            }
-        };
-        mBtnMusic.setOnClickListener(onClickListener);
-        mBtnVideo.setOnClickListener(onClickListener);
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mViewPager.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        List<Fragment> fragments=new ArrayList<>();
-        fragments.add(new IndexMusicFragment());
-        fragments.add(new IndexVideoFragment());
-        mViewPager.setOffscreenPageLimit(1);
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels){
+                ((TextView) findViewById(R.id.tv_content)).setText("请求中API...");
+                OkHttpUtils.get("http://a.automsen.com/api/user/get_config", new OnResultCallBack<Test>() {
+                    @Override
+                    public void onResponse(Test data) {
+                        if(null!=data){
+                            ((TextView) findViewById(R.id.tv_content)).setText(data.toString());
+                        }
+                    }
 
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if(0==position){
-                    mBtnVideo.setSelected(false);
-                    mBtnMusic.setSelected(true);
-                }else if(1==position){
-                    mBtnMusic.setSelected(false);
-                    mBtnVideo.setSelected(true);
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
+                    @Override
+                    public void onError(int code, String errorMsg) {
+                        ((TextView) findViewById(R.id.tv_content)).setText("code:"+code+",message:"+errorMsg);
+                    }
+                });
             }
         });
-        mPagerAdapter = new MusicFragmentPagerAdapter(getSupportFragmentManager(), fragments);
-        mViewPager.setAdapter(mPagerAdapter);
-        requstPermissions();
+        //系统
+        findViewById(R.id.btn_sys).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((TextView) findViewById(R.id.tv_content)).setText("请求中API...");
+                OkHttpUtils.getInstance().setbSysRequst("http://a.automsen.com/api/user/get_config", new OnResultCallBack<Test>() {
+                    @Override
+                    public void onResponse(Test data) {
+                        if(null!=data){
+                            ((TextView) findViewById(R.id.tv_content)).setText(data.toString());
+                        }
+                    }
 
-        //当APP被回收或者用户退出了APP，音乐还在后台播放，点击通知栏时会将正在播放的音频ID传到此处
-        long audioID = getIntent().getLongExtra(MusicConstants.KEY_MUSIC_ID, 0);
-        if(audioID>0){
-            startToMusicPlayer(audioID);
-        }
+                    @Override
+                    public void onError(int code, String errorMsg) {
+                        ((TextView) findViewById(R.id.tv_content)).setText("code:"+code+",message:"+errorMsg);
+                    }
+                });
+            }
+        });
+//        mBtnMusic = (TextView) findViewById(R.id.music_btn_music);
+//        mBtnMusic.setSelected(true);
+//        mBtnVideo = (TextView) findViewById(R.id.music_btn_video);
+//        View.OnClickListener onClickListener=new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                int id = v.getId();
+//                switch (id) {
+//                    case R.id.music_btn_music:
+//                        mBtnVideo.setSelected(false);
+//                        mBtnMusic.setSelected(true);
+//                        mViewPager.setCurrentItem(0);
+//                        break;
+//                    case R.id.music_btn_video:
+//                        mBtnMusic.setSelected(false);
+//                        mBtnVideo.setSelected(true);
+//                        mViewPager.setCurrentItem(1);
+//                        break;
+//                }
+//            }
+//        };
+//        mBtnMusic.setOnClickListener(onClickListener);
+//        mBtnVideo.setOnClickListener(onClickListener);
+//        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+//        mViewPager.setOverScrollMode(View.OVER_SCROLL_NEVER);
+//        List<Fragment> fragments=new ArrayList<>();
+//        fragments.add(new IndexMusicFragment());
+//        fragments.add(new IndexVideoFragment());
+//        mViewPager.setOffscreenPageLimit(1);
+//        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels){
+//
+//            }
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//                if(0==position){
+//                    mBtnVideo.setSelected(false);
+//                    mBtnMusic.setSelected(true);
+//                }else if(1==position){
+//                    mBtnMusic.setSelected(false);
+//                    mBtnVideo.setSelected(true);
+//                }
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//
+//            }
+//        });
+//        mPagerAdapter = new MusicFragmentPagerAdapter(getSupportFragmentManager(), fragments);
+//        mViewPager.setAdapter(mPagerAdapter);
+//        requstPermissions();
+//
+//        //当APP被回收或者用户退出了APP，音乐还在后台播放，点击通知栏时会将正在播放的音频ID传到此处
+//        long audioID = getIntent().getLongExtra(MusicConstants.KEY_MUSIC_ID, 0);
+//        if(audioID>0){
+//            startToMusicPlayer(audioID);
+//        }
     }
 
     /**

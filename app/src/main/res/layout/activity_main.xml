@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -9,12 +10,62 @@
     </android.support.v4.view.ViewPager>
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textColor="#555555"
+            android:textSize="15dp"
+            android:includeFontPadding="false"
+            android:layout_margin="20dp"
+            android:lineSpacingExtra="3dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="15dp">
+            <com.android.imusic.music.view.ShapeTextView
+                android:id="@+id/btn_okHttp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:shapeBackgroundColor="@color/colorAccent"
+                android:layout_marginRight="5dp"
+                app:shapeBackgroundSelectorColor="#530d97"
+                app:shapeRadius="5dp"
+                android:textColor="#FFFFFF"
+                android:textSize="16dp"
+                android:gravity="center"
+                android:text="OkHttp"/>
+            <com.android.imusic.music.view.ShapeTextView
+                android:id="@+id/btn_sys"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginLeft="5dp"
+                app:shapeBackgroundColor="@color/colorAccent"
+                app:shapeBackgroundSelectorColor="#530d97"
+                app:shapeRadius="5dp"
+                android:textColor="#FFFFFF"
+                android:textSize="16dp"
+                android:gravity="center"
+                android:text="原生"/>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="bottom"
         android:layout_marginLeft="80dp"
         android:layout_marginRight="80dp"
-        android:layout_marginBottom="39dp">
+        android:layout_marginBottom="39dp"
+        android:visibility="invisible">
             <TextView
                 android:id="@+id/music_btn_music"
                 android:layout_width="0dp"
